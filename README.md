@@ -8,7 +8,7 @@ Treasure Hunt AR is an iOS app designed to make treasure hunts more exciting usi
 
 2. **Hunt**: My kid uses the app in scan mode to find the places based on the photos. When they reach the correct spot, the hidden number appears in AR. Collecting all the numbers gives them the code to open the box and get the gifts.
 
-**Note**: The app launches in the Scan mode, to switch to the "Artis" mode tap three times to the area below the notch(island). Do the same to switch back. It is done this way to prevent accidental activation when the kid gets too excited.
+**Note**: The app launches in the Scan mode, to switch to the "Artist" mode tap three times to the area below the notch(island). Do the same to switch back. It is done this way to prevent accidental activation when the kid gets too excited.
 
 ## Development
 
