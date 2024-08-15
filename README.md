@@ -2,10 +2,10 @@
 
 Treasure Hunt AR is an iOS app designed to make treasure hunts more exciting using Augmented Reality (AR). I built this app in about 8 hours for my kid’s birthday, combining their love for treasure hunts and secrets into a fun game.
 
-### Drawing
-![RPReplay_Final1723726819](https://github.com/user-attachments/assets/5e77301f-5999-44f9-ae2f-d5b2d6afa3a1)   
-### Scaning
-![RPReplay_Final1723726854](https://github.com/user-attachments/assets/7c42494c-2809-44e3-bb02-53eec06e276e)
+| **Drawing** | **Scanning** |
+|-------------|--------------|
+| ![Drawing](https://github.com/user-attachments/assets/5e77301f-5999-44f9-ae2f-d5b2d6afa3a1) | ![Scanning](https://github.com/user-attachments/assets/7c42494c-2809-44e3-bb02-53eec06e276e) |
+
 
 ## How It Works
 
