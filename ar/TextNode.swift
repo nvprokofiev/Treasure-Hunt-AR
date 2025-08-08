@@ -10,21 +10,19 @@ import ARKit
 import CoreLocation
 
 struct TextNode: Codable, Hashable, Identifiable {
-    let title: String
     let text: String
     let coordinates: CLLocationCoordinate2D
     let position: SCNVector3
     
     var id: String {
-        title + "\(coordinates.latitude)" + "\(coordinates.longitude)"
+        text + "\(coordinates.latitude)" + "\(coordinates.longitude)"
     }
     
     static func == (lhs: TextNode, rhs: TextNode) -> Bool {
-        lhs.title == rhs.title && lhs.coordinates == rhs.coordinates
+        lhs.text == rhs.text && lhs.coordinates == rhs.coordinates
     }
     
     func hash(into hasher: inout Hasher) {
-        hasher.combine(title)
         hasher.combine(coordinates.latitude)
         hasher.combine(coordinates.longitude)
     }

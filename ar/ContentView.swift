@@ -8,10 +8,26 @@ struct ContentView: View {
     @State var textTitle: String = ""
     @State var textContent: String = ""
     @State var showMyDrawings = false
+    @State private var isAnimating = false
+    @State private var glowIntensity: Double = 0.5
 
     var body: some View {
         ZStack {
             ARViewContainer(viewModel: viewModel).edgesIgnoringSafeArea(.all)
+            
+            // Animated background gradient
+            LinearGradient(
+                colors: [
+                    Color.purple.opacity(0.1),
+                    Color.blue.opacity(0.1),
+                    Color.cyan.opacity(0.1)
+                ],
+                startPoint: .topLeading,
+                endPoint: .bottomTrailing
+            )
+            .ignoresSafeArea()
+            .scaleEffect(isAnimating ? 1.2 : 1.0)
+            .animation(.easeInOut(duration: 4).repeatForever(autoreverses: true), value: isAnimating)
 
             VStack {
                 if !viewModel.isDrawing {
@@ -20,12 +36,17 @@ struct ContentView: View {
                 Spacer()
 
                 if viewModel.isArtistMode {
-                    drawButton
+                    if viewModel.isFreeHand {
+                        drawButton
+                    }
                 } else {
                     captureButton
                 }
             }
             .padding()
+        }
+        .onAppear {
+            isAnimating = true
         }
         .overlay(alignment: .top) {
             HStack {
@@ -57,10 +78,9 @@ struct ContentView: View {
             }
         }
         .alert("Add Text", isPresented: $viewModel.showTextAlert) {
-            TextField("Enter title", text: $textTitle)
             TextField("Enter text content", text: $textContent)
             Button("Save") {
-                viewModel.saveText(with: textTitle, text: textContent)
+                viewModel.saveText(textContent)
                 textTitle = String()
                 textContent = String()
             }
@@ -79,54 +99,100 @@ struct ContentView: View {
         HStack(alignment: .top) {
             if viewModel.isArtistMode {
                 VStack(alignment: .leading, spacing: 16) {
-                    Text("Total: \(viewModel.allDrawings.count + viewModel.allTextNodes.count)")
-                        .modifier(CapsuleTextStyle())
+                    // Enhanced total counter with glow effect
+                    
+                    actionButton(title: "Total: \(viewModel.allDrawings.count + viewModel.allTextNodes.count)", icon: "list.bullet", color: .red) {
+                        showMyDrawings.toggle()
+                    }
+                    
                     divider
-                    artistButtons
+                    HStack {
+                        actionButton(title: "Free Hand", icon: "text.bubble", color: .indigo, action: viewModel.didTapFreeHand)
+                        
+                        Spacer()
+                        
+                        actionButton(title: "Text", icon: "text.bubble", color: .orange, action: viewModel.didTapText)
+                    }
+                    
+                    if viewModel.isFreeHand {
+                        artistButtons
+                    }
                 }
+                .animation(.snappy, value: viewModel.isFreeHand)
             }
             Spacer()
         }
     }
 
     private var divider: some View {
-        RoundedRectangle(cornerRadius: 1, style: .continuous)
-            .foregroundStyle(Color.white.opacity(0.3))
-            .frame(width: 100, height: 2)
-            .padding(.vertical, 8)
+    RoundedRectangle(cornerRadius: 2, style: .continuous)
+        .foregroundStyle(
+            LinearGradient(
+                colors: [.purple, .blue, .cyan],
+                startPoint: .leading,
+                endPoint: .trailing
+            )
+        )
+        .frame(width: 140, height: 3)
+        .scaleEffect(isAnimating ? 1.1 : 1.0)
+        .animation(.easeInOut(duration: 2).repeatForever(autoreverses: true), value: isAnimating)
+        .padding(.vertical, 16)
     }
     
     private var artistButtons: some View {
         VStack(alignment: .leading, spacing: 16) {
-            actionButton(title: "Save", color: .purple, action: viewModel.didTapSave)
-            actionButton(title: "Reset", color: .blue, action: viewModel.reset)
-            actionButton(title: "Text", color: .orange, action: viewModel.didTapText)
+            actionButton(title: "Save", icon: "square.and.arrow.down", color: .purple, action: viewModel.didTapSave)
+            actionButton(title: "Reset", icon: "arrow.clockwise", color: .blue, action: viewModel.reset)
             divider
-            actionButton(title: "View All", color: .red) {
-                showMyDrawings.toggle()
+            
+            // Enhanced radius stepper
+            HStack {
+                Image(systemName: "location.circle.fill")
+                    .foregroundColor(.cyan)
+                    .scaleEffect(isAnimating ? 1.1 : 1.0)
+                    .animation(.easeInOut(duration: 2).repeatForever(autoreverses: true), value: isAnimating)
+                
+                Text("Radius \(Int(viewModel.radius))m")
+                    .font(.system(size: 16, weight: .semibold, design: .rounded))
+                    .foregroundColor(.white)
+                
+                Spacer()
+                
+                Stepper("", value: $viewModel.radius, in: 3...20)
+                    .labelsHidden()
             }
-            Stepper("Radius \(Int(viewModel.radius))m", value: $viewModel.radius, in: 3...20)
-                .frame(width: 200)
-                .font(.system(size: 18, weight: .semibold, design: .rounded))
-                .foregroundColor(.white)
-                .padding(.horizontal, 12)
-                .padding(.vertical, 8)
-                .frame(minWidth: 100)
-                .background(
-                    Capsule()
-                        .fill(Color(uiColor: .magenta).opacity(0.6))
-                )
-                .overlay(
-                    Capsule()
-                        .stroke(Color.white.opacity(0.6), lineWidth: 1)
-                )
-                .shadow(color: .black.opacity(0.3), radius: 3, x: 0, y: 2)
+            .padding(.horizontal, 16)
+            .padding(.vertical, 12)
+            .background(
+                RoundedRectangle(cornerRadius: 20)
+                    .fill(.ultraThinMaterial)
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 20)
+                            .stroke(
+                                LinearGradient(
+                                    colors: [.cyan, .blue],
+                                    startPoint: .leading,
+                                    endPoint: .trailing
+                                ),
+                                lineWidth: 1.5
+                            )
+                    )
+                    .shadow(color: .cyan.opacity(0.4), radius: 8, x: 0, y: 4)
+            )
         }
     }
 
     private var drawButton: some View {
         Button(action: {}) {
-            Text(viewModel.isDrawing ? "Stop" : "Draw")
+            HStack(spacing: 12) {
+                Image(systemName: viewModel.isDrawing ? "stop.circle.fill" : "pencil.circle.fill")
+                    .font(.title2)
+                    .scaleEffect(isAnimating ? 1.1 : 1.0)
+                    .animation(.easeInOut(duration: 1.5).repeatForever(autoreverses: true), value: isAnimating)
+                
+                Text(viewModel.isDrawing ? "Stop" : "Draw")
+                    .font(.system(size: 18, weight: .bold, design: .rounded))
+            }
         }
         .modifier(mainButtonStyle(color: .green))
         .simultaneousGesture(
@@ -134,28 +200,48 @@ struct ContentView: View {
                 .onChanged { _ in viewModel.start() }
                 .onEnded { _ in viewModel.stop() }
         )
+        .scaleEffect(viewModel.isDrawing ? 1.05 : 1.0)
+        .animation(.spring(response: 0.3, dampingFraction: 0.6), value: viewModel.isDrawing)
     }
     
     private var captureButton: some View {
         Button(action: viewModel.capture) {
-            Text("Capture 📸")
+            HStack(spacing: 12) {
+                Image(systemName: "camera.circle.fill")
+                    .font(.title2)
+                    .scaleEffect(isAnimating ? 1.1 : 1.0)
+                    .animation(.easeInOut(duration: 1.5).repeatForever(autoreverses: true), value: isAnimating)
+                
+                Text("Capture")
+                    .font(.system(size: 18, weight: .bold, design: .rounded))
+            }
         }
         .modifier(mainButtonStyle(color: .green))
+        .scaleEffect(isAnimating ? 1.02 : 1.0)
+        .animation(.easeInOut(duration: 2).repeatForever(autoreverses: true), value: isAnimating)
     }
 
-    private func actionButton(title: String, color: Color, action: @escaping () -> Void) -> some View {
+    private func actionButton(title: String, icon: String, color: Color, action: @escaping () -> Void) -> some View {
         Button(action: action) {
-            Text(title)
+            HStack(spacing: 8) {
+                Image(systemName: icon)
+                    .font(.system(size: 14, weight: .semibold))
+                    .scaleEffect(isAnimating ? 1.1 : 1.0)
+                    .animation(.easeInOut(duration: 1.5).repeatForever(autoreverses: true), value: isAnimating)
+                
+                Text(title)
+                    .font(.system(size: 14, weight: .semibold, design: .rounded))
+            }
         }
         .modifier(smallButtonStyle(color: color))
     }
     
     private func mainButtonStyle(color: Color) -> some ViewModifier {
-        ButtonStyleModifier(color: color, width: 140, height: 55)
+        ButtonStyleModifier(color: color, width: 180, height: 55)
     }
     
     private func smallButtonStyle(color: Color) -> some ViewModifier {
-        ButtonStyleModifier(color: color, width: 100, height: 40)
+        ButtonStyleModifier(color: color, width: 140, height: 40)
     }
 }
 
@@ -169,13 +255,20 @@ struct CapsuleTextStyle: ViewModifier {
             .frame(minWidth: 100)
             .background(
                 Capsule()
-                    .fill(Color.black.opacity(0.6))
+                    .fill(.ultraThinMaterial)
+                    .overlay(
+                        Capsule()
+                            .stroke(
+                                LinearGradient(
+                                    colors: [.purple, .blue, .cyan],
+                                    startPoint: .leading,
+                                    endPoint: .trailing
+                                ),
+                                lineWidth: 1.5
+                            )
+                    )
             )
-            .overlay(
-                Capsule()
-                    .stroke(Color.white.opacity(0.6), lineWidth: 1)
-            )
-            .shadow(color: .black.opacity(0.3), radius: 3, x: 0, y: 2)
+            .shadow(color: .purple.opacity(0.4), radius: 8, x: 0, y: 4)
     }
 }
 
@@ -191,17 +284,22 @@ struct ButtonStyleModifier: ViewModifier {
             .padding()
             .frame(width: width, height: height)
             .background(
-                LinearGradient(gradient: Gradient(colors: [color.opacity(0.9), color.opacity(0.7)]),
-                               startPoint: .topLeading,
-                               endPoint: .bottomTrailing)
+                RoundedRectangle(cornerRadius: height / 2)
+                    .fill(.ultraThinMaterial)
+                    .overlay(
+                        RoundedRectangle(cornerRadius: height / 2)
+                            .stroke(
+                                LinearGradient(
+                                    colors: [color, color.opacity(0.7)],
+                                    startPoint: .topLeading,
+                                    endPoint: .bottomTrailing
+                                ),
+                                lineWidth: 2
+                            )
+                    )
             )
             .foregroundColor(.white)
-            .cornerRadius(height / 2)
-            .overlay(
-                RoundedRectangle(cornerRadius: height / 2)
-                    .stroke(Color.white.opacity(0.2), lineWidth: 2)
-            )
-            .shadow(color: Color.black.opacity(0.2), radius: 10, x: 0, y: 5)
+            .shadow(color: color.opacity(0.6), radius: 15, x: 0, y: 8)
     }
 }
 

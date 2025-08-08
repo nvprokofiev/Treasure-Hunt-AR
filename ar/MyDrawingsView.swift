@@ -140,8 +140,6 @@ struct TextNodeCellView: View {
     var body: some View {
         HStack(spacing: 16) {
             VStack(alignment: .leading, spacing: 4) {
-                Text(textNode.title)
-                    .font(.headline)
                 Text(textNode.text)
                     .font(.caption)
                     .foregroundColor(.secondary)
@@ -181,7 +179,7 @@ struct TextNodeLocationView: View {
                     
                 }
             }
-            .navigationTitle(textNode.title)
+            .navigationTitle(textNode.text)
             .ignoresSafeArea()
         }
     }

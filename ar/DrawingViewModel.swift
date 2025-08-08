@@ -21,6 +21,7 @@ class DrawingViewModel: NSObject, ObservableObject {
     @Published var showTextAlert = false
     @Published var found: UUID?
     @Published var radius: Double = 5
+    @Published var isFreeHand = false
 
     var lastPoint: SCNVector3?
     var drawingNode: SCNLineNode?
@@ -44,6 +45,10 @@ class DrawingViewModel: NSObject, ObservableObject {
             try? await Task.sleep(for: .seconds(1))
             for await location in locationManger.locationStream.unsafelyUnwrapped {
                 self.location = location
+                
+                if isArtistMode && found != nil {
+                    wipeScreen()
+                }
                 
                 guard !isArtistMode else { continue }
                 var foundDrawing = false
@@ -81,19 +86,23 @@ class DrawingViewModel: NSObject, ObservableObject {
                 if foundDrawing {
                     continue
                 } else {
-                    // remove all nodes when out of the region
-                    addedNodes.forEach {
-                        $0.removeFromParentNode()
-                    }
-                    addedNodes.removeAll()
-                    
-                    addedTextNodes.forEach {
-                        $0.removeFromParentNode()
-                    }
-                    addedTextNodes.removeAll()
+                    wipeScreen()
                 }
             }
         }
+    }
+    
+    private func wipeScreen() {
+        // remove all nodes when out of the region
+        addedNodes.forEach {
+            $0.removeFromParentNode()
+        }
+        addedNodes.removeAll()
+        
+        addedTextNodes.forEach {
+            $0.removeFromParentNode()
+        }
+        addedTextNodes.removeAll()
     }
     
     func placeNodeInFrontOfCamera(node: SCNNode, distance: Float) {
@@ -173,6 +182,12 @@ class DrawingViewModel: NSObject, ObservableObject {
         }
     }
     
+    func didTapFreeHand() {
+        Task { @MainActor in
+            isFreeHand.toggle()
+        }
+    }
+    
     func didTapSave() {
         Task { @MainActor in
             showSaveAlert = true
@@ -248,10 +263,11 @@ class DrawingViewModel: NSObject, ObservableObject {
     func didTapText() {
         Task { @MainActor in
             showTextAlert = true
+            isFreeHand = false
         }
     }
     
-    func saveText(with title: String, text: String) {
+    func saveText(_ text: String) {
         guard let location else { return }
         
         // Get camera position for text placement
@@ -260,7 +276,6 @@ class DrawingViewModel: NSObject, ObservableObject {
         
         var allTextNodes = loadTextNodes(from: textFileName) ?? []
         let currentTextNode = TextNode(
-            title: title,
             text: text,
             coordinates: location.coordinate,
             position: cameraPosition
