@@ -364,7 +364,14 @@ class DrawingViewModel: NSObject, ObservableObject {
         let scaleDown = SCNAction.scale(to: 0.95, duration: 2.0)
         let scaleSequence = SCNAction.sequence([scaleUp, scaleDown])
         let scaleRepeat = SCNAction.repeatForever(scaleSequence)
-        containerNode.runAction(scaleRepeat)
+        
+        // Add rotation animation
+        let rotationAction = SCNAction.rotateBy(x: 0, y: 2 * .pi, z: 0, duration: 8.0)
+        let rotationRepeat = SCNAction.repeatForever(rotationAction)
+        
+        // Group scale and rotation animations
+        let groupAction = SCNAction.group([scaleRepeat, rotationRepeat])
+        containerNode.runAction(groupAction)
 
         // Start repeating confetti when text node is created
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
