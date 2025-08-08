@@ -5,6 +5,8 @@ import TipKit
 struct ContentView: View {
     @ObservedObject var viewModel = DrawingViewModel()
     @State var drawingName: String = ""
+    @State var textTitle: String = ""
+    @State var textContent: String = ""
     @State var showMyDrawings = false
 
     var body: some View {
@@ -54,6 +56,19 @@ struct ContentView: View {
                 drawingName = String()
             }
         }
+        .alert("Add Text", isPresented: $viewModel.showTextAlert) {
+            TextField("Enter title", text: $textTitle)
+            TextField("Enter text content", text: $textContent)
+            Button("Save") {
+                viewModel.saveText(with: textTitle, text: textContent)
+                textTitle = String()
+                textContent = String()
+            }
+            Button("Cancel", role: .cancel) {
+                textTitle = String()
+                textContent = String()
+            }
+        }
         .sheet(isPresented: $showMyDrawings) {
             MyDrawingsView(viewModel: viewModel)
         }
@@ -64,7 +79,7 @@ struct ContentView: View {
         HStack(alignment: .top) {
             if viewModel.isArtistMode {
                 VStack(alignment: .leading, spacing: 16) {
-                    Text("Total: \(viewModel.allDrawings.count)")
+                    Text("Total: \(viewModel.allDrawings.count + viewModel.allTextNodes.count)")
                         .modifier(CapsuleTextStyle())
                     divider
                     artistButtons
@@ -85,6 +100,7 @@ struct ContentView: View {
         VStack(alignment: .leading, spacing: 16) {
             actionButton(title: "Save", color: .purple, action: viewModel.didTapSave)
             actionButton(title: "Reset", color: .blue, action: viewModel.reset)
+            actionButton(title: "Text", color: .orange, action: viewModel.didTapText)
             divider
             actionButton(title: "View All", color: .red) {
                 showMyDrawings.toggle()
@@ -118,7 +134,6 @@ struct ContentView: View {
                 .onChanged { _ in viewModel.start() }
                 .onEnded { _ in viewModel.stop() }
         )
-        .sensoryFeedback(.success, trigger: viewModel.isDrawing)
     }
     
     private var captureButton: some View {

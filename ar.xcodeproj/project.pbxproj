@@ -20,6 +20,7 @@
 		0BDAB3CB2C61D24E00DCFAC4 /* DrawingViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BDAB3CA2C61D24E00DCFAC4 /* DrawingViewModel.swift */; };
 		0BDAB3CF2C61D56D00DCFAC4 /* LocationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BDAB3CE2C61D56D00DCFAC4 /* LocationManager.swift */; };
 		0BDAB3D12C61E11200DCFAC4 /* Drawing.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BDAB3D02C61E11200DCFAC4 /* Drawing.swift */; };
+		0BDAB3D22C61E11200DCFAC4 /* TextNode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BDAB3D32C61E11200DCFAC4 /* TextNode.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -36,6 +37,7 @@
 		0BDAB3CA2C61D24E00DCFAC4 /* DrawingViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DrawingViewModel.swift; sourceTree = "<group>"; };
 		0BDAB3CE2C61D56D00DCFAC4 /* LocationManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocationManager.swift; sourceTree = "<group>"; };
 		0BDAB3D02C61E11200DCFAC4 /* Drawing.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Drawing.swift; sourceTree = "<group>"; };
+		0BDAB3D32C61E11200DCFAC4 /* TextNode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextNode.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -76,6 +78,7 @@
 				0B01F47E2C5E6BEA00A36CEF /* ContentView.swift */,
 				0B69FFC52C6D920400E00104 /* ARViewContainer.swift */,
 				0BDAB3D02C61E11200DCFAC4 /* Drawing.swift */,
+				0BDAB3D32C61E11200DCFAC4 /* TextNode.swift */,
 				0BDAB3CA2C61D24E00DCFAC4 /* DrawingViewModel.swift */,
 				0BDAB3CE2C61D56D00DCFAC4 /* LocationManager.swift */,
 				0B69FFC72C6D922E00E00104 /* MyDrawingsView.swift */,
@@ -183,6 +186,7 @@
 				0B69FFC82C6D922E00E00104 /* MyDrawingsView.swift in Sources */,
 				0B69FFCA2C6D927E00E00104 /* CLLocationCoordinate2D+Extensions.swift in Sources */,
 				0BDAB3D12C61E11200DCFAC4 /* Drawing.swift in Sources */,
+				0BDAB3D22C61E11200DCFAC4 /* TextNode.swift in Sources */,
 				0BDAB3CB2C61D24E00DCFAC4 /* DrawingViewModel.swift in Sources */,
 				0B69FFCF2C6D986E00E00104 /* Tip.swift in Sources */,
 				0B01F47D2C5E6BEA00A36CEF /* arApp.swift in Sources */,

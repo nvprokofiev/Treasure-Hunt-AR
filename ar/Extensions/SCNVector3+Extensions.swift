@@ -29,3 +29,18 @@ extension SCNVector3: Codable {
     }
 }
 
+// MARK: - Vector Math Extensions
+extension SCNVector3 {
+    var length: Float {
+        return sqrt(x * x + y * y + z * z)
+    }
+    
+    func normalized() -> SCNVector3 {
+        let len = length
+        if len == 0 {
+            return SCNVector3(0, 0, 0)
+        }
+        return SCNVector3(x / len, y / len, z / len)
+    }
+}
+
